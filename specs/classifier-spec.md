@@ -65,9 +65,11 @@ label was applied — title and description are both useful; other fields
 **Example block sketch (write one concrete example):**
 
 ```
-Title: {title}
-Description: {description}
-Label: {label}
+Title: Dr. Priya Nair on the Science of Sleep Deprivation
+
+Description: Dr. Priya Nair has spent fifteen years studying what happens to the brain when it doesn't sleep. In this episode, we talk through her landmark 2019 study on cumulative sleep debt, what the research says about weekend recovery sleep (spoiler: it doesn't work the way you think), and why she believes the eight-hour standard is more cultural myth than biological fact. She also shares what changed in her own sleep habits after spending a decade measuring everyone else's. If you've ever felt fine on five hours, this conversation will make you rethink that confidence.
+
+Label: Interview
 ```
 
 ---
@@ -75,15 +77,15 @@ Label: {label}
 **How should the new episode (to be classified) be presented?**
 
 ```
-Present it in the same format as the labeled examples, but omit the Label
-line and replace it with an instruction to classify. For example:
-
 Title: {title}
 Description: {description}
 Label: ?
 
-Then add a line like: "Classify the episode above. Return your answer in
-the format below:" followed by the output format you chose.
+Classify the episode above. Return your answer in
+the format below:
+
+"Label: {label}
+Reasoning: {reasoning}"
 ```
 
 ---
@@ -91,10 +93,8 @@ the format below:" followed by the output format you chose.
 **What output format should you request from the LLM?**
 
 ```
-[blank — you need to parse the response in classify_episode(). What format
-makes parsing reliable? Think about: a single label on its own line?
-A structured format like "Label: X / Reasoning: Y"? JSON?
-What are the tradeoffs?]
+"Label: {label}
+Reasoning: {reasoning}"
 ```
 
 ---
@@ -104,6 +104,9 @@ What are the tradeoffs?]
 ```
 [blank — what if labeled_examples is empty? What if the description is very
 short? How does your prompt handle these?]
+
+If labeled_examples is empty, respond that there's no labeled examples.
+If the description is very short, use the best guess but warn the user that the description is too short.
 ```
 
 ---
@@ -159,9 +162,7 @@ Extract the response text from:
 **Step 3 — Parse the response:**
 
 ```
-[blank — how do you extract the label and reasoning from the LLM's text output?
-What string operations or parsing logic do you need?
-This depends on the output format you chose in build_few_shot_prompt.]
+Extract label from the string after "Label: " and reasoning from the string after "Reasoning: ". Use Regex operations to parse through the string.
 ```
 
 ---
@@ -169,8 +170,7 @@ This depends on the output format you chose in build_few_shot_prompt.]
 **Step 4 — Validate the label:**
 
 ```
-[blank — what do you do if the LLM returns a label that isn't in VALID_LABELS?
-What should label be set to?]
+If the label isn't in valid labels, set it to unknown.
 ```
 
 ---
